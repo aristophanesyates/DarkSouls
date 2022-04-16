@@ -12,6 +12,9 @@ namespace ATY
         [HideInInspector]
         public Transform myTransform;
 
+        [HideInInspector]
+        public AnimatorHandler animatorHandler;
+
         public new Rigidbody rigidbody;
         public GameObject normalCamera;
 
@@ -25,8 +28,10 @@ namespace ATY
         {
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
+            animatorHandler = GetComponentInChildren<AnimatorHandler>();
             cameraObject = Camera.main.gameObject;
             myTransform = transform;
+            animatorHandler.Initialize();
         }
         // Update is called once per frame
         void Update()
@@ -42,7 +47,13 @@ namespace ATY
 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
             rigidbody.velocity = projectedVelocity;
-            HandleRotation(delta);
+
+            animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0);
+
+            if (animatorHandler.canRotate)
+            {
+                HandleRotation(delta);
+            }
         }
         #region Movement
         Vector3 normalVector;
